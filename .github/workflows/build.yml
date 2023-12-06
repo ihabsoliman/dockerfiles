@@ -1,0 +1,16 @@
+name: "Build dockerfiles"
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build dockerfiles
+    uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
+    with:
+      push: false
+      dockerfile: go/debian.Dockerfile
+      context: go
+      name: go
+      tag: test

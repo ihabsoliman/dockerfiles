@@ -6,11 +6,22 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        project: ["go"]
+        include:
+          - project: go
+            os: debain
+            os_version: bookworm
+            version: 1.21
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:
       push: false
-      dockerfile: ./go/debain.Dockerfile
-      context: ./go
-      name: go
+      dockerfile: ./${{ matrix.project }}/${{ matrix.os }}.Dockerfile
+      context: ./${{ matrix.project }}
+      name: ${{ matrix.project }}
       tag: test
+      build-args: |
+        DEBIAN_VERSION=${{ matrix.os_version }}
+        GO_VERSION=${{ matrix.version }}

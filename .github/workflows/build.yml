@@ -10,7 +10,7 @@ jobs:
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:
       push: false
-      dockerfile: go/debian.Dockerfile
-      context: go
+      dockerfile: ./go/debain.Dockerfile
+      context: ./go
       name: go
       tag: test

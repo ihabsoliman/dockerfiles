@@ -42,6 +42,10 @@ jobs:
             os_build_arg_key: ALPINE_VERSION
             os_version: 3.18
             go_version: 1.21
+    secrets: inherit
+    permissions:
+      packages: write
+      contents: read
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:

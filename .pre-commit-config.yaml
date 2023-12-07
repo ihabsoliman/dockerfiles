@@ -13,3 +13,4 @@ repos:
   rev: v0.1.0
   hooks:
   - id: dockerfilelint
+    stages: [manual]

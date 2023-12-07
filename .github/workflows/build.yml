@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         project: ["go"]
+        os_varient: ["debain", "alpine"]
         include:
           - project: go
             os_varient: debain

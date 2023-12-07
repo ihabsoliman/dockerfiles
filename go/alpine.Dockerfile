@@ -26,7 +26,7 @@ FROM qmcgaw/binpot:buildx-${BUILDX_VERSION} AS buildx
 FROM qmcgaw/binpot:logo-ls-${LOGOLS_VERSION} AS logo-ls
 FROM qmcgaw/binpot:bit-${BIT_VERSION} AS bit
 FROM qmcgaw/binpot:gh-${GH_VERSION} AS gh
-FROM golang:${GO_VERSION}-${DEBIAN_VERSION} AS go
+FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS go
 
 FROM qmcgaw/binpot:gomodifytags-${GOMODIFYTAGS_VERSION} AS gomodifytags
 FROM qmcgaw/binpot:goplay-${GOPLAY_VERSION} AS goplay
@@ -84,7 +84,7 @@ ADD https://raw.githubusercontent.com/qdm12/basedevcontainer/8cdffe886e48f4ade08
 RUN git clone --single-branch --depth 1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 
 # Shell setup
-COPY shell/.zshrc-specific shell/.welcome.sh /root/
+COPY shell/.zshrc-specific /root/
 
 ARG POWERLEVEL10K_VERSION=v1.16.1
 ADD https://raw.githubusercontent.com/qdm12/basedevcontainer/8cdffe886e48f4ade080e40e1fc6d433aae0eccb/shell/.p10k.zsh /root

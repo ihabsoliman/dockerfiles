@@ -12,7 +12,7 @@ jobs:
         include:
           - project: go
             os: debain
-            os_version: bookworm
+            os_version: DEBIAN_VERSION=bookworm
             version: 1.21
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
@@ -23,5 +23,5 @@ jobs:
       name: ${{ matrix.project }}
       tag: test
       build-args: |
-        DEBIAN_VERSION=${{ matrix.os_version }}
+        ${{ matrix.os_version }}
         GO_VERSION=${{ matrix.version }}

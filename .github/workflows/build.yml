@@ -19,9 +19,6 @@ jobs:
           - os_varient: debain
             os_version: DEBIAN_VERSION=bookworm
             version: 1.21
-          - os_varient: debain
-            os_version: DEBIAN_VERSION=bullseye
-            version: 1.21
           - os_varient: alpine
             os_version: ALPINE_VERSION=3.18
             version: 1.21

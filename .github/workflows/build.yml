@@ -14,6 +14,7 @@ jobs:
       matrix:
         project: ["go"]
         os_varient: ["debain", "alpine"]
+        platform: ["linux/amd64", "linux/arm64"]
         include:
           - project: go
             os_varient: debain
@@ -31,6 +32,7 @@ jobs:
       context: ./${{ matrix.project }}
       name: ${{ matrix.project }}
       tag: ${{ matrix.os_varient }}-${{ matrix.version }}-test
+      platforms: ${{ matrix.platform }}
       build-args: |
         ${{ matrix.os_version }}
         GO_VERSION=${{ matrix.version }}

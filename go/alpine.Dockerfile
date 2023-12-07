@@ -26,7 +26,6 @@ FROM qmcgaw/binpot:buildx-${BUILDX_VERSION} AS buildx
 FROM qmcgaw/binpot:logo-ls-${LOGOLS_VERSION} AS logo-ls
 FROM qmcgaw/binpot:bit-${BIT_VERSION} AS bit
 FROM qmcgaw/binpot:gh-${GH_VERSION} AS gh
-FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS go
 
 FROM qmcgaw/binpot:gomodifytags-${GOMODIFYTAGS_VERSION} AS gomodifytags
 FROM qmcgaw/binpot:goplay-${GOPLAY_VERSION} AS goplay
@@ -38,6 +37,8 @@ FROM qmcgaw/binpot:gopls-${GOPLS_VERSION} AS gopls
 FROM qmcgaw/binpot:golangci-lint-${GOLANGCILINT_VERSION} AS golangci-lint
 FROM qmcgaw/binpot:impl-${IMPL_VERSION} AS impl
 FROM qmcgaw/binpot:gopkgs-${GOPKGS_VERSION} AS gopkgs
+
+FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS go
 
 FROM alpine:${ALPINE_VERSION}
 ARG CREATED

@@ -45,6 +45,7 @@ jobs:
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:
+      push: true
       dockerfile: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
       context: ./${{ matrix.project }}
       name: ${{ matrix.project }}-${{ matrix.go_version }}

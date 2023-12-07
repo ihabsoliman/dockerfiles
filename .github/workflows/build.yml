@@ -1,8 +1,6 @@
-name: "Build dockerfiles"
+name: "Build"
 on:
   pull_request:
-  push:
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,20 +15,22 @@ jobs:
         platform: ["linux/amd64", "linux/arm64"]
         include:
           - os_varient: debain
-            os_version: DEBIAN_VERSION=bookworm
-            version: 1.21
+            os_version: bookworm
+            os_build_arg_key: DEBIAN_VERSION
+            go_version: 1.21
           - os_varient: alpine
-            os_version: ALPINE_VERSION=3.18
-            version: 1.21
+            os_build_arg_key: ALPINE_VERSION
+            os_version: 3.18
+            go_version: 1.21
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:
       push: false
       dockerfile: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
       context: ./${{ matrix.project }}
-      name: ${{ matrix.project }}
-      tag: ${{ matrix.os_varient }}-${{ matrix.version }}-test
+      name: ${{ matrix.project }}-${{ matrix.go_version }}
+      tag: ${{ matrix.os_varient }}-${{ matrix.os_version }}-test
       platforms: ${{ matrix.platform }}
       build-args: |
-        ${{ matrix.os_version }}
-        GO_VERSION=${{ matrix.version }}
+        ${{ matrix.os_build_arg_key }}=${{ matrix.os_version }}
+        GO_VERSION=${{ matrix.go_version }}

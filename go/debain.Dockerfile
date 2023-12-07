@@ -55,23 +55,22 @@ ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH \
 # CA certificates
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends ca-certificates && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /var/cache/*
 
 # Timezone
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends tzdata && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /var/cache/*
 ENV TZ=
 
 # Setup Git and SSH
-# Workaround for older Debian in order to be able to sign commits
-RUN echo "deb https://deb.debian.org/debian bookworm main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends -t bookworm git git-man && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git git-man && \
+    rm -rf /var/lib/apt/lists/* /var/cache/*
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends man openssh-client less && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /var/cache/*
+
 COPY shell/.ssh.sh /root/
 RUN chmod +x /root/.ssh.sh
 # Retro-compatibility symlink
@@ -83,7 +82,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends zsh nano locales g++ wget curl && \
     apt-get autoremove -y && \
     apt-get clean -y && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /var/cache/*
 ENV EDITOR=nano \
     LANG=en_US.UTF-8 \
     # MacOS compatibility

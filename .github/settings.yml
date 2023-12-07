@@ -11,22 +11,23 @@ branches:
         # Required. Require branches to be up to date before merging.
         strict: true
         # Required. The list of status checks to require in order to merge into this branch
-        contexts:
-          - pre-commit
-          - Build dockerfiles (go, debain, linux/amd64) / publish
-          - Build dockerfiles (go, debain, linux/arm64) / publish
-          - Build dockerfiles (go, alpine, linux/amd64) / publish
-          - Build dockerfiles (go, alpine, linux/arm64) / publish
-
+        contexts: [
+          "pre-commit",
+          "Build dockerfiles (go, debain, linux/amd64) / publish",
+          "Build dockerfiles (go, debain, linux/arm64) / publish",
+          "Build dockerfiles (go, alpine, linux/amd64) / publish",
+          "Build dockerfiles (go, alpine, linux/arm64) / publish"
+        ]
   - name: release/*
     protection:
       required_status_checks:
         # Required. Require branches to be up to date before merging.
         strict: true
         # Required. The list of status checks to require in order to merge into this branch
-        contexts:
-          - pre-commit
-          - Build dockerfiles (go, debain, linux/amd64) / publish
-          - Build dockerfiles (go, debain, linux/arm64) / publish
-          - Build dockerfiles (go, alpine, linux/amd64) / publish
-          - Build dockerfiles (go, alpine, linux/arm64) / publish
+        contexts: [
+          "pre-commit",
+          "Build dockerfiles (go, debain, linux/amd64) / publish",
+          "Build dockerfiles (go, debain, linux/arm64) / publish",
+          "Build dockerfiles (go, alpine, linux/amd64) / publish",
+          "Build dockerfiles (go, alpine, linux/arm64) / publish"
+        ]

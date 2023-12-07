@@ -1,6 +1,9 @@
 name: "Build"
 on:
   pull_request:
+    paths-ignore:
+      .github/settings.yml
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -11,17 +11,21 @@ jobs:
         project: ["go"]
         include:
           - project: go
-            os: debain
+            os_varient: debain
             os_version: DEBIAN_VERSION=bookworm
+            version: 1.21
+          - project: go
+            os_varient: alpine
+            os_version: ALPINE_VERSION=3.18
             version: 1.21
     name: Build dockerfiles
     uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
     with:
       push: false
-      dockerfile: ./${{ matrix.project }}/${{ matrix.os }}.Dockerfile
+      dockerfile: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
       context: ./${{ matrix.project }}
       name: ${{ matrix.project }}
-      tag: test
+      tag: ${{ matrix.os_varient }}-${{ matrix.version }}-test
       build-args: |
         ${{ matrix.os_version }}
         GO_VERSION=${{ matrix.version }}

@@ -50,49 +50,35 @@ ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH \
     CGO_ENABLED=0 \
     GO111MODULE=on
-WORKDIR $GOPATH
 
 # CA certificates
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends ca-certificates && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+RUN apk add -q --update --progress --no-cache ca-certificates
 
 # Timezone
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends tzdata && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+RUN apk add -q --update --progress --no-cache tzdata
 ENV TZ=
 
 # Setup Git and SSH
-# Workaround for older Debian in order to be able to sign commits
-RUN echo "deb https://deb.debian.org/debian bookworm main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends -t bookworm git git-man && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends man openssh-client less && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+RUN apk add -q --update --progress --no-cache git mandoc git-doc openssh-client
+
+
 COPY shell/.ssh.sh /root/
 RUN chmod +x /root/.ssh.sh
 # Retro-compatibility symlink
 RUN  ln -s /root/.ssh.sh /root/.windows.sh
 
+WORKDIR /root
+
 # Setup shell
 ENTRYPOINT [ "/bin/zsh" ]
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends zsh nano locales wget && \
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -r /var/cache/* /var/lib/apt/lists/*
+RUN apk add -q --update --progress --no-cache zsh nano zsh-vcs g++
 ENV EDITOR=nano \
     LANG=en_US.UTF-8 \
     # MacOS compatibility
     TERM=xterm
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
-    locale-gen en_US.UTF-8
-RUN usermod --shell /bin/zsh root
+RUN apk add -q --update --progress --no-cache shadow && \
+    usermod --shell /bin/zsh root && \
+    apk del shadow
 
 ADD https://raw.githubusercontent.com/qdm12/basedevcontainer/8cdffe886e48f4ade080e40e1fc6d433aae0eccb/shell/.zshrc /root/
 RUN git clone --single-branch --depth 1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
@@ -102,8 +88,8 @@ COPY shell/.zshrc-specific shell/.welcome.sh /root/
 
 ARG POWERLEVEL10K_VERSION=v1.16.1
 ADD https://raw.githubusercontent.com/qdm12/basedevcontainer/8cdffe886e48f4ade080e40e1fc6d433aae0eccb/shell/.p10k.zsh /root
-RUN git clone --branch ${POWERLEVEL10K_VERSION} --single-branch --depth 1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k && \
-    rm -rf ~/.oh-my-zsh/custom/themes/powerlevel10k/.git
+RUN apk add -q --update --progress --no-cache zsh-theme-powerlevel10k gitstatus && \
+    ln -s /usr/share/zsh/plugins/powerlevel10k ~/.oh-my-zsh/custom/themes/powerlevel10k
 
 # Docker CLI
 COPY --from=docker /bin /usr/local/bin/docker
@@ -139,3 +125,5 @@ COPY --from=gopls /bin /go/bin/gopls
 COPY --from=golangci-lint /bin /go/bin/golangci-lint
 COPY --from=impl /bin /go/bin/impl
 COPY --from=gopkgs /bin /go/bin/gopkgs
+
+WORKDIR $GOPATH

@@ -43,6 +43,7 @@ FROM debian:${DEBIAN_VERSION}
 ARG CREATED
 ARG COMMIT
 ARG VERSION=local
+
 ENV BASE_VERSION="${VERSION}-${CREATED}-${COMMIT}"
 
 COPY --from=go /usr/local/go /usr/local/go

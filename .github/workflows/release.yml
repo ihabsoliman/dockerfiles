@@ -1,0 +1,78 @@
+name: "Release"
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      .github/*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  calculate-next-version:
+    runs-on: ubuntu-22.04
+    outputs:
+      next_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - name: Next tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@fcfbdceb3093f6d85a3b194740f8c6cec632f4e2 #v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+
+  build:
+    needs:
+      - calculate-next-version
+    strategy:
+      matrix:
+        project: ["go"]
+        os_varient: ["debain", "alpine"]
+        platform: ["linux/amd64", "linux/arm64"]
+        include:
+          - os_varient: debain
+            os_version: bookworm
+            os_build_arg_key: DEBIAN_VERSION
+            go_version: 1.21
+          - os_varient: alpine
+            os_build_arg_key: ALPINE_VERSION
+            os_version: 3.18
+            go_version: 1.21
+    name: Build dockerfiles
+    uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
+    with:
+      dockerfile: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
+      context: ./${{ matrix.project }}
+      name: ${{ matrix.project }}-${{ matrix.go_version }}
+      tag: ${{ matrix.os_varient }}-${{ matrix.os_version }}-${{ needs.calculate-next-version.outputs.next_tag }}
+      platforms: ${{ matrix.platform }}
+      build-args: |
+        ${{ matrix.os_build_arg_key }}=${{ matrix.os_version }}
+        GO_VERSION=${{ matrix.go_version }}
+
+  release:
+    needs:
+      - calculate-next-version
+      - build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - name: Next tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@fcfbdceb3093f6d85a3b194740f8c6cec632f4e2 #v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ needs.calculate-next-version.outputs.next_tag }}
+      - name: Create github release
+        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 #v1.13.0
+        with:
+          tag: ${{ needs.calculate-next-version.outputs.next_tag }}
+          name: ${{ needs.calculate-next-version.outputs.next_tag }}
+          body: ${{ needs.calculate-next-version.outputs.changelog }}

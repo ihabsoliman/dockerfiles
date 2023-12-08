@@ -11,28 +11,6 @@ concurrency:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        project: ["go"]
-        os_varient: ["debain", "alpine"]
-        include:
-          - os_varient: debain
-            os_version: bookworm
-            os_build_arg_key: DEBIAN_VERSION
-            go_version: 1.21
-          - os_varient: alpine
-            os_build_arg_key: ALPINE_VERSION
-            os_version: 3.18
-            go_version: 1.21
-    name: Build dockerfiles
-    uses: ihabsoliman/github-actions-workflows/.github/workflows/build-publish-image.yml@v0.0.1
+    uses: ./.github/workflows/build-image.yml
     with:
       push: false
-      dockerfile: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
-      context: ./${{ matrix.project }}
-      name: "${{ matrix.project }}-${{ matrix.go_version }}"
-      tag: "${{ matrix.os_varient }}-${{ matrix.os_version }}-ci"
-      platforms: "linux/amd64,linux/arm64"
-      build-args: |
-        ${{ matrix.os_build_arg_key }}=${{ matrix.os_version }}
-        GO_VERSION=${{ matrix.go_version }}

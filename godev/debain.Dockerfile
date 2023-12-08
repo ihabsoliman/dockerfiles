@@ -52,7 +52,7 @@ LABEL \
     org.opencontainers.image.url="https://github.com/ihabsoliman/dockerfiles" \
     org.opencontainers.image.documentation="https://github.com/ihabsoliman/dockerfiles" \
     org.opencontainers.image.source="https://github.com/ihabsoliman/dockerfiles" \
-    org.opencontainers.image.title="Go Dev container ${DEBIAN_VERSION}" \
+    org.opencontainers.image.title="Go Dev container debian ${DEBIAN_VERSION}" \
     org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"
 
 ENV BASE_VERSION="${VERSION}-${CREATED}-${COMMIT}"

@@ -37,9 +37,8 @@ jobs:
       matrix:
         project: ["godev"]
         os_varient: ["debain", "alpine"]
+        go_version: ["1.21"]
         include:
-          - project: godev
-            go_version: 1.21
           - os_varient: debain
             os_version: bookworm
             os_build_arg_key: DEBIAN_VERSION

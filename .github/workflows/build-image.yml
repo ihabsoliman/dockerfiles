@@ -69,9 +69,9 @@ jobs:
           owner=${{ github.repository_owner }}
           echo "owner=${owner,,}" >>${GITHUB_OUTPUT}
           if [[ ${{ inputs.push }} == 'true' ]]; then
-            echo "tag=${{ matrix.go_version }}-${{ matrix.os_version }}-${{ needs.calculate-next-version.outputs.next_tag }}" >>${GITHUB_OUTPUT}
+            echo "tag=${{ matrix.go_version }}-${{ needs.calculate-next-version.outputs.next_tag }}" >>${GITHUB_OUTPUT}
           else
-            echo "tag=${{ matrix.go_version }}-${{ matrix.os_version }}-ci" >>${GITHUB_OUTPUT}
+            echo "tag=${{ matrix.go_version }}-ci" >>${GITHUB_OUTPUT}
           fi
           echo "commit=$(git rev-parse --short HEAD)" >>${GITHUB_OUTPUT}
           echo "created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >>${GITHUB_OUTPUT}

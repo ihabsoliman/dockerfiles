@@ -17,3 +17,25 @@ jobs:
     permissions:
       packages: write
       contents: read
+
+  release:
+    needs:
+      - build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - name: Next tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@fcfbdceb3093f6d85a3b194740f8c6cec632f4e2 #v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ needs.build.outputs.next_tag }}
+      - name: Create github release
+        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 #v1.13.0
+        with:
+          tag: ${{ needs.build.outputs.next_tag }}
+          name: ${{ needs.build.outputs.next_tag }}
+          body: ${{ needs.build.outputs.changelog }}

@@ -98,3 +98,13 @@ jobs:
             VERSION=${{ steps.vars.outputs.tag }}
             CREATED=${{ steps.vars.outputs.created }}
             COMMIT=${{ steps.vars.outputs.commit }}
+          annotations: |
+            org.opencontainers.image.authors="${{ github.actor.email }}"
+            org.opencontainers.image.created=${{ steps.vars.outputs.created }}
+            org.opencontainers.image.version=${{ steps.vars.outputs.tag }}
+            org.opencontainers.image.revision=${{ steps.vars.outputs.commit }}
+            org.opencontainers.image.url="https://github.com/ihabsoliman/dockerfiles"
+            org.opencontainers.image.documentation="https://github.com/ihabsoliman/dockerfiles"
+            org.opencontainers.image.source="https://github.com/ihabsoliman/dockerfiles"
+            org.opencontainers.image.title="Go Dev container debian ${DEBIAN_VERSION}"
+            org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"

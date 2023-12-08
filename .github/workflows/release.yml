@@ -13,4 +13,4 @@ jobs:
   build:
     uses: ./.github/workflows/build-image.yml
     with:
-      push: false
+      push: true

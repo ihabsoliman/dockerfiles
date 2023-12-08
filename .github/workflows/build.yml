@@ -4,7 +4,6 @@ on:
     paths-ignore:
       .github/settings.yml
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

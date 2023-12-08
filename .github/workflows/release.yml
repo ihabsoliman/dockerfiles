@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build:
-    uses: ./.github/workflows/build-image.yml
+    uses: ./.github/workflows/.build-image.yml
     with:
       push: true
     permissions:

@@ -4,4 +4,4 @@ Contains dockerfiles which are published to ghcr.io of the most used images I bu
 
 ## Projects
 
-- [go](./go)
+- [godev](./godev) Docker image ready to be used with devcontainers

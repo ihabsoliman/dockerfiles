@@ -1,0 +1,93 @@
+# reusable workflow
+name: build image
+
+on:
+  workflow_call:
+    inputs:
+      push:
+        description: Push build image to registry
+        type: boolean
+        default: false
+
+env:
+  PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6"
+
+jobs:
+  calculate-next-version:
+    runs-on: ubuntu-22.04
+    outputs:
+      next_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - name: Next tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@fcfbdceb3093f6d85a3b194740f8c6cec632f4e2 #v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+
+  build:
+    runs-on: ubuntu-22.04
+    needs:
+      - calculate-next-version
+    name: Build dockerfiles
+    strategy:
+      matrix:
+        project: ["godev"]
+        go_version: ["1.21"]
+        os_varient: ["debain", "alpine"]
+        include:
+          - os_varient: debain
+            os_version: bookworm
+            os_build_arg_key: DEBIAN_VERSION
+          - os_varient: alpine
+            os_build_arg_key: ALPINE_VERSION
+            os_version: 3.18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 #v3
+        with:
+          platforms: ${{ env.PLATFORMS }}
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: vars
+        id: vars
+        run: |
+          owner=${{ github.repository_owner }}
+          echo "owner=${owner,,}" >>${GITHUB_OUTPUT}
+          if [[ ${{ inputs.push }} == 'true' ]]; then
+            echo "tag=${{ matrix.go_version }}-${{ needs.calculate-next-version.outputs.next_tag }}" >>${GITHUB_OUTPUT}
+          else
+            echo "tag=${{ matrix.go_version }}-ci" >>${GITHUB_OUTPUT}
+          fi
+          echo "commit=$(git rev-parse --short HEAD)" >>${GITHUB_OUTPUT}
+          echo "created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >>${GITHUB_OUTPUT}
+
+      - name: Build and push
+        id: buildpush
+        uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 #v5.1.0
+        with:
+          no-cache: true
+          file: ./${{ matrix.project }}/${{ matrix.os_varient }}.Dockerfile
+          context: ./${{ matrix.project }}
+          push: ${{ inputs.push }}
+          tags: ghcr.io/${{ steps.vars.outputs.owner }}/${{ matrix.project }}:${{ steps.vars.outputs.tag }}
+          platforms: ${{ env.PLATFORMS }}
+          build-args: |
+            ${{ matrix.os_build_arg_key }}=${{ matrix.os_version }}
+            GO_VERSION=${{ matrix.go_version }}
+            VERSION=${{ steps.vars.outputs.tag }}
+            CREATED=${{ steps.vars.outputs.created }}
+            COMMIT=${{ steps.vars.outputs.commit }}

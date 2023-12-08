@@ -44,6 +44,16 @@ FROM debian:${DEBIAN_VERSION}
 ARG CREATED
 ARG COMMIT
 ARG VERSION=local
+LABEL \
+    org.opencontainers.image.authors="***REMOVED***" \
+    org.opencontainers.image.created=$CREATED \
+    org.opencontainers.image.version=$VERSION \
+    org.opencontainers.image.revision=$COMMIT \
+    org.opencontainers.image.url="https://github.com/ihabsoliman/dockerfiles" \
+    org.opencontainers.image.documentation="https://github.com/ihabsoliman/dockerfiles" \
+    org.opencontainers.image.source="https://github.com/ihabsoliman/dockerfiles" \
+    org.opencontainers.image.title="Go Dev container ${DEBIAN_VERSION}" \
+    org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"
 
 ENV BASE_VERSION="${VERSION}-${CREATED}-${COMMIT}"
 

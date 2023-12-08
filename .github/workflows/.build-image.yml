@@ -3,6 +3,13 @@ name: build image
 
 on:
   workflow_call:
+    outputs:
+      next_tag:
+        description: next release tag
+        value: ${{ jobs.calculate-next-version.outputs.next_tag }}
+      changelog:
+        description: next release changelog
+        value: ${{ jobs.calculate-next-version.outputs.changelog }}
     inputs:
       push:
         description: Push build image to registry

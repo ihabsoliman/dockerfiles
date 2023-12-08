@@ -68,7 +68,7 @@ jobs:
           owner=${{ github.repository_owner }}
           echo "owner=${owner,,}" >>${GITHUB_OUTPUT}
           if [[ ${{ inputs.push }} == 'true' ]]; then
-            echo "tag=${{ matrix.go_version }}-${{ needs.calculate-next-version.outputs.next_tag }}" >>${GITHUB_OUTPUT}
+            echo "tag=${{ matrix.go_version }}-${{ matrix.os_varient }}-${{ needs.calculate-next-version.outputs.next_tag }}" >>${GITHUB_OUTPUT}
           else
             echo "tag=${{ matrix.go_version }}-ci" >>${GITHUB_OUTPUT}
           fi

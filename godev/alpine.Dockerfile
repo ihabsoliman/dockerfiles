@@ -44,16 +44,17 @@ FROM alpine:${ALPINE_VERSION}
 ARG CREATED
 ARG COMMIT
 ARG VERSION=local
-LABEL \
-    org.opencontainers.image.authors="***REMOVED***" \
-    org.opencontainers.image.created=$CREATED \
-    org.opencontainers.image.version=$VERSION \
-    org.opencontainers.image.revision=$COMMIT \
-    org.opencontainers.image.url="https://github.com/ihabsoliman/dockerfiles" \
-    org.opencontainers.image.documentation="https://github.com/ihabsoliman/dockerfiles" \
-    org.opencontainers.image.source="https://github.com/ihabsoliman/dockerfiles" \
-    org.opencontainers.image.title="Go Dev container alpine ${ALPINE_VERSION}" \
-    org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"
+ARG EMAIL
+
+LABEL org.opencontainers.image.authors="${EMAIL}"
+LABEL org.opencontainers.image.created=$CREATED
+LABEL org.opencontainers.image.version=$VERSION
+LABEL org.opencontainers.image.revision=$COMMIT
+LABEL org.opencontainers.image.url="https://github.com/ihabsoliman/dockerfiles"
+LABEL org.opencontainers.image.documentation="https://github.com/ihabsoliman/dockerfiles"
+LABEL org.opencontainers.image.source="https://github.com/ihabsoliman/dockerfiles"
+LABEL org.opencontainers.image.title="Go Dev container alpine ${ALPINE_VERSION}"
+LABEL org.opencontainers.image.description="Go development container for Visual Studio Code Remote Containers development"
 
 ENV BASE_VERSION="${VERSION}-${CREATED}-${COMMIT}"
 

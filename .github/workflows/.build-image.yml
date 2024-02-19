@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         project: ["godev"]
-        go_version: ["1.21"]
+        go_version: ["1.21", "1.22"]
         os_varient: ["debian", "alpine"]
         include:
           - os_varient: debian
